@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  api:
+    image: ghcr.io/your-org/bazaarmind-api:latest
+    env_file:
+      - ../../.env
+    ports:
+      - "127.0.0.1:8080:8000"
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  worker:
+    image: ghcr.io/your-org/bazaarmind-api:latest
+    env_file:
+      - ../../.env
+    command: celery -A app.core.celery_app.celery_app worker -Q ml-training,maintenance --loglevel=INFO
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
